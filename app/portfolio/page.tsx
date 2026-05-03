@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
-// ✅ FIX: Dynamic import (NO SSR)
-const LineChart = dynamic(() => import("recharts").then((m) => m.LineChart), { ssr: false });
-const Line = dynamic(() => import("recharts").then((m) => m.Line), { ssr: false });
-const XAxis = dynamic(() => import("recharts").then((m) => m.XAxis), { ssr: false });
-const YAxis = dynamic(() => import("recharts").then((m) => m.YAxis), { ssr: false });
-const Tooltip = dynamic(() => import("recharts").then((m) => m.Tooltip), { ssr: false });
-const ResponsiveContainer = dynamic(() => import("recharts").then((m) => m.ResponsiveContainer), { ssr: false });
+// ✅ Fix SSR issue (IMPORTANT)
+const LineChart = dynamic(() => import("recharts").then(m => m.LineChart), { ssr: false });
+const Line = dynamic(() => import("recharts").then(m => m.Line), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
 
 export default function Portfolio() {
   const [userData, setUserData] = useState<any>(null);
@@ -21,15 +21,17 @@ export default function Portfolio() {
   });
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("userData") || "{}");
+    try {
+      const stored = localStorage.getItem("userData");
+      if (!stored) return;
 
-    if (data) {
+      const data = JSON.parse(stored);
       setUserData(data);
 
       const monthly = Number(data.income) || 5000;
 
       // 📈 Growth Projection
-      let temp = [];
+      let temp: any[] = [];
       let total = 0;
 
       for (let i = 1; i <= 12; i++) {
@@ -42,7 +44,7 @@ export default function Portfolio() {
 
       setProjection(temp);
 
-      // 📊 Allocation based on risk
+      // 📊 Allocation logic
       if (data.risk === "Low Risk") {
         setAllocation({ equity: 30, debt: 60, gold: 10 });
       } else if (data.risk === "High Risk") {
@@ -50,6 +52,8 @@ export default function Portfolio() {
       } else {
         setAllocation({ equity: 60, debt: 30, gold: 10 });
       }
+    } catch (err) {
+      console.log("Error reading localStorage", err);
     }
   }, []);
 
@@ -58,7 +62,7 @@ export default function Portfolio() {
 
       {/* HEADER */}
       <h2 style={heading}>📊 Your Portfolio</h2>
-      <p style={sub}>Based on your inputs 👇</p>
+      <p style={sub}>Personalized based on your inputs</p>
 
       <div style={grid}>
 
@@ -69,8 +73,8 @@ export default function Portfolio() {
           <div style={card}>
             <h3 style={cardTitle}>Summary</h3>
             <p>💰 Monthly Investment: ₹{userData?.income || 0}</p>
-            <p>🎯 Goal: {userData?.goal || "—"}</p>
-            <p>⚖️ Risk Level: {userData?.risk || "—"}</p>
+            <p>🎯 Goal: {userData?.goal || "Wealth Creation"}</p>
+            <p>⚖️ Risk Level: {userData?.risk || "Moderate"}</p>
           </div>
 
           {/* ALLOCATION */}
@@ -82,22 +86,22 @@ export default function Portfolio() {
             <p>🟡 Gold: {allocation.gold}%</p>
 
             <p style={highlight}>
-              Balanced for your risk profile
+              Balanced as per your risk profile
             </p>
           </div>
 
-          {/* GOAL PROGRESS */}
+          {/* GOAL TRACK */}
           <div style={card}>
             <h3 style={cardTitle}>Goal Progress</h3>
 
-            <p>Target: ₹10,00,000</p>
+            <p>🎯 Target: ₹10,00,000</p>
             <p>
-              Invested (1 yr): ₹
-              {userData?.income ? Number(userData.income) * 12 : 0}
+              📈 Invested (1 year): ₹
+              {(userData?.income ? Number(userData.income) * 12 : 0).toLocaleString()}
             </p>
 
             <p style={highlight}>
-              You are on track 🚀
+              🚀 You are on track
             </p>
           </div>
 
@@ -110,30 +114,28 @@ export default function Portfolio() {
           <div style={card}>
             <h3 style={cardTitle}>Growth Projection</h3>
 
-            <div style={{ width: "100%", height: 250 }}>
-              {projection.length > 0 && (
-                <ResponsiveContainer>
-                  <LineChart data={projection}>
-                    <XAxis dataKey="month" stroke="#94a3b8" />
-                    <YAxis stroke="#94a3b8" />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#22c55e"
-                      strokeWidth={3}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
+            <div style={{ width: "100%", height: 260 }}>
+              <ResponsiveContainer>
+                <LineChart data={projection}>
+                  <XAxis dataKey="month" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#22c55e"
+                    strokeWidth={3}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
 
             <p style={insight}>
-              ⚠ If you delay investing by 2 years, you may lose ₹2–3L.
+              ⚠ Delaying investment reduces long-term gains significantly
             </p>
           </div>
 
-          {/* WHY */}
+          {/* INSIGHT */}
           <div style={card}>
             <h3 style={cardTitle}>Why this plan?</h3>
 
@@ -153,19 +155,19 @@ export default function Portfolio() {
 
 const container = {
   padding: 20,
-  maxWidth: 1000,
+  maxWidth: 1100,
   margin: "0 auto",
   color: "white"
 };
 
 const heading = {
-  fontSize: 26,
+  fontSize: 28,
   fontWeight: "bold"
 };
 
 const sub = {
   color: "#94a3b8",
-  marginTop: 5
+  marginTop: 6
 };
 
 const grid = {
@@ -178,13 +180,13 @@ const grid = {
 const leftCol = {
   display: "flex",
   flexDirection: "column" as const,
-  gap: 15
+  gap: 16
 };
 
 const rightCol = {
   display: "flex",
   flexDirection: "column" as const,
-  gap: 15
+  gap: 16
 };
 
 const card = {
@@ -196,7 +198,8 @@ const card = {
 
 const cardTitle = {
   marginBottom: 10,
-  fontWeight: "bold"
+  fontWeight: "bold",
+  fontSize: 16
 };
 
 const highlight = {
