@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
-// ✅ Fix SSR issue (IMPORTANT)
+// ✅ Fix Recharts SSR issue
 const LineChart = dynamic(() => import("recharts").then(m => m.LineChart), { ssr: false });
 const Line = dynamic(() => import("recharts").then(m => m.Line), { ssr: false });
 const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
@@ -37,7 +37,7 @@ export default function Portfolio() {
       for (let i = 1; i <= 12; i++) {
         total += monthly + total * 0.01;
         temp.push({
-          month: `M${i}`,
+          month: `M${i}`, // ✅ FIXED
           value: Math.round(total)
         });
       }
@@ -52,6 +52,7 @@ export default function Portfolio() {
       } else {
         setAllocation({ equity: 60, debt: 30, gold: 10 });
       }
+
     } catch (err) {
       console.log("Error reading localStorage", err);
     }
