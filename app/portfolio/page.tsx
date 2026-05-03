@@ -1,13 +1,15 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer
-} from "recharts";
+import dynamic from "next/dynamic";
+
+// ✅ FIX: Dynamic import (NO SSR)
+const LineChart = dynamic(() => import("recharts").then((m) => m.LineChart), { ssr: false });
+const Line = dynamic(() => import("recharts").then((m) => m.Line), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then((m) => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((m) => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then((m) => m.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then((m) => m.ResponsiveContainer), { ssr: false });
 
 export default function Portfolio() {
   const [userData, setUserData] = useState<any>(null);
@@ -66,9 +68,9 @@ export default function Portfolio() {
           {/* SUMMARY */}
           <div style={card}>
             <h3 style={cardTitle}>Summary</h3>
-            <p>💰 Monthly Investment: ₹{userData?.income}</p>
-            <p>🎯 Goal: {userData?.goal}</p>
-            <p>⚖️ Risk Level: {userData?.risk}</p>
+            <p>💰 Monthly Investment: ₹{userData?.income || 0}</p>
+            <p>🎯 Goal: {userData?.goal || "—"}</p>
+            <p>⚖️ Risk Level: {userData?.risk || "—"}</p>
           </div>
 
           {/* ALLOCATION */}
@@ -109,19 +111,21 @@ export default function Portfolio() {
             <h3 style={cardTitle}>Growth Projection</h3>
 
             <div style={{ width: "100%", height: 250 }}>
-              <ResponsiveContainer>
-                <LineChart data={projection}>
-                  <XAxis dataKey="month" stroke="#94a3b8" />
-                  <YAxis stroke="#94a3b8" />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#22c55e"
-                    strokeWidth={3}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {projection.length > 0 && (
+                <ResponsiveContainer>
+                  <LineChart data={projection}>
+                    <XAxis dataKey="month" stroke="#94a3b8" />
+                    <YAxis stroke="#94a3b8" />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#22c55e"
+                      strokeWidth={3}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </div>
 
             <p style={insight}>
