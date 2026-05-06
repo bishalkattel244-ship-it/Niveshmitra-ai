@@ -13,10 +13,9 @@ export default function RootLayout({
       <body
         style={{
           margin: 0,
-          padding: 0,
-          background: "#0f172a", // 🔥 DARK BACKGROUND FIX
+          background: "#020c1b",
           color: "white",
-          fontFamily: "Arial, sans-serif",
+          fontFamily: "Arial",
         }}
       >
         {children}
