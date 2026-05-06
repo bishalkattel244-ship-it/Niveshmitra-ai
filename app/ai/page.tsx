@@ -1,176 +1,223 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AIPage() {
   const router = useRouter();
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const [activeIndex, setActiveIndex] =
+    useState<number | null>(null);
 
   const data = [
     {
       q: "Can I invest in gold?",
-      a: "Yes, but limit it to 5–10%. Gold protects wealth but doesn’t grow fast. Prefer SGB or ETFs."
+      a: "Yes. Gold helps protect wealth and reduce volatility. Limit allocation to around 5–10% of your portfolio.",
     },
+
     {
-      q: "I have 3 acres of agricultural land, how should I generate income?",
-      a: "Use mixed strategy: farming + leasing + dairy/poultry. Combine active + passive income."
+      q: "I earn ₹30k/month. How should I start investing?",
+      a: "First build an emergency fund. Then start a monthly SIP in diversified equity mutual funds.",
     },
-    {
-      q: "I want to buy a ₹20 lakh car in 4 years, help me plan",
-      a: "Invest ₹30–35k/month in equity mutual funds (SIP). Starting early reduces pressure."
-    },
-    {
-      q: "How to invest in bonds? Is it safe?",
-      a: "Yes, bonds are safer. Use govt bonds or debt funds. Expect 6–8% returns."
-    },
-    {
-      q: "I earn ₹30k/month, how should I start investing?",
-      a: "Start ₹5–6k SIP monthly. Build emergency fund first, then invest consistently."
-    },
-    {
-      q: "Where should I invest for long-term wealth?",
-      a: "Equity mutual funds + index funds. Stay invested for 5+ years."
-    },
-    {
-      q: "How much should I save vs invest?",
-      a: "Save 20–30%, invest ~20%. First secure, then grow."
-    },
+
     {
       q: "Is SIP better than lump sum?",
-      a: "For beginners → SIP. For large capital → lump sum."
+      a: "For beginners and salaried investors, SIP is usually safer and more disciplined.",
     },
+
     {
-      q: "How to build passive income?",
-      a: "Use dividends, REITs, and long-term compounding. It takes time."
+      q: "How do I create long-term wealth?",
+      a: "Long-term wealth is built through consistency, compounding, and disciplined investing over years.",
     },
+
     {
-      q: "Best low-risk investment options?",
-      a: "FD, debt funds, govt bonds, SGB. Returns ~5–7%."
+      q: "What are low-risk investments?",
+      a: "Government bonds, debt funds, fixed deposits, and SGBs are comparatively lower-risk options.",
     },
+
     {
-      q: "How to create an emergency fund?",
-      a: "Save 3–6 months expenses in liquid funds or savings account."
-    }
+      q: "How much emergency fund should I keep?",
+      a: "Ideally maintain 3–6 months of expenses in liquid savings before aggressive investing.",
+    },
   ];
 
   return (
     <div style={container}>
-
       {/* HEADER */}
-      <h1 style={title}>🤖 AI Investment Assistant</h1>
-      <p style={subtitle}>
-        Tap a question to see answer 👇
-      </p>
+
+      <div style={hero}>
+        <h1 style={title}>
+          🤖 NiveshMitra AI
+        </h1>
+
+        <p style={subtitle}>
+          Your AI-powered investment companion
+          for smarter financial decisions.
+        </p>
+
+        <div style={badge}>
+          AI-guided wealth onboarding
+        </div>
+      </div>
 
       {/* QUESTIONS */}
-      <div style={{ marginTop: 20 }}>
-        {data.map((item, index) => (
-          <div key={index} style={{ marginBottom: 10 }}>
 
-            {/* QUESTION */}
+      <div style={questionContainer}>
+        {data.map((item, index) => (
+          <div
+            key={index}
+            style={questionCard}
+          >
             <button
               style={questionBtn}
               onClick={() =>
-                setActiveIndex(activeIndex === index ? null : index)
+                setActiveIndex(
+                  activeIndex === index
+                    ? null
+                    : index
+                )
               }
             >
-              {item.q}
+              <span>{item.q}</span>
+
+              <span>
+                {activeIndex === index
+                  ? "−"
+                  : "+"}
+              </span>
             </button>
 
-            {/* ANSWER */}
             {activeIndex === index && (
               <div style={answerBox}>
                 {item.a}
               </div>
             )}
-
           </div>
         ))}
       </div>
 
-      {/* BOTTOM BUTTONS */}
-      <div style={bottomBtns}>
-        <button style={skipBtn} onClick={() => router.push("/chat")}>
-          Skip →
-        </button>
+      {/* CTA */}
 
-        <button style={nextBtn} onClick={() => router.push("/chat")}>
-          Next →
+      <div style={ctaCard}>
+        <h2 style={ctaTitle}>
+          Ready to build your portfolio?
+        </h2>
+
+        <p style={ctaText}>
+          NiveshMitra AI will now understand
+          your financial profile and generate
+          a personalized investment portfolio.
+        </p>
+
+        <button
+          style={continueBtn}
+          onClick={() =>
+            router.push("/chat")
+          }
+        >
+          Continue →
         </button>
       </div>
-
     </div>
   );
 }
 
-/* ---------- STYLES ---------- */
+/* ---------------- STYLES ---------------- */
 
 const container = {
-  padding: 20,
-  maxWidth: 500,
+  padding: "30px 20px",
+  maxWidth: "700px",
   margin: "0 auto",
-  background: "#0f172a",
+  background: "#020c1b",
   minHeight: "100vh",
-  color: "white"
+  color: "white",
+};
+
+const hero = {
+  textAlign: "center" as const,
+  marginBottom: "35px",
 };
 
 const title = {
-  fontSize: 26,
-  fontWeight: "bold",
-  textAlign: "center" as const
+  fontSize: "42px",
+  fontWeight: "bold" as const,
 };
 
 const subtitle = {
-  textAlign: "center" as const,
+  marginTop: "14px",
   color: "#94a3b8",
-  marginTop: 10
+  lineHeight: 1.7,
+};
+
+const badge = {
+  marginTop: "20px",
+  display: "inline-block",
+  background: "#1e293b",
+  color: "#22c55e",
+  padding: "10px 18px",
+  borderRadius: "999px",
+  fontSize: "14px",
+};
+
+const questionContainer = {
+  marginTop: "30px",
+};
+
+const questionCard = {
+  marginBottom: "16px",
 };
 
 const questionBtn = {
   width: "100%",
-  padding: 12,
+  padding: "18px",
   textAlign: "left" as const,
   background: "#1e293b",
-  borderRadius: 10,
-  border: "none",
+  borderRadius: "18px",
+  border: "1px solid #334155",
   color: "white",
-  cursor: "pointer"
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  fontWeight: "bold" as const,
 };
 
 const answerBox = {
-  marginTop: 6,
-  padding: 12,
-  background: "#162033",
-  borderRadius: 10,
-  color: "#cbd5f5",
-  fontSize: 14,
-  lineHeight: 1.5
+  marginTop: "8px",
+  padding: "18px",
+  background: "#111827",
+  borderRadius: "16px",
+  color: "#cbd5e1",
+  lineHeight: 1.7,
 };
 
-const bottomBtns = {
-  display: "flex",
-  justifyContent: "space-between",
-  marginTop: 25,
-  gap: 10
+const ctaCard = {
+  marginTop: "40px",
+  background:
+    "linear-gradient(to right, #16a34a, #059669)",
+  padding: "30px",
+  borderRadius: "24px",
+  textAlign: "center" as const,
 };
 
-const skipBtn = {
-  flex: 1,
-  padding: 12,
-  background: "#334155",
-  borderRadius: 10,
+const ctaTitle = {
+  fontSize: "28px",
+  fontWeight: "bold" as const,
+};
+
+const ctaText = {
+  marginTop: "14px",
+  lineHeight: 1.7,
+};
+
+const continueBtn = {
+  marginTop: "24px",
+  background: "white",
+  color: "#059669",
+  padding: "14px 22px",
+  borderRadius: "14px",
   border: "none",
-  color: "white",
-  cursor: "pointer"
-};
-
-const nextBtn = {
-  flex: 1,
-  padding: 12,
-  background: "#22c55e",
-  borderRadius: 10,
-  border: "none",
-  color: "white",
-  fontWeight: "bold",
-  cursor: "pointer"
+  fontWeight: "bold" as const,
+  cursor: "pointer",
+  fontSize: "15px",
 };
